@@ -10,6 +10,7 @@ import java.util.List;
 import mobi.cyann.deviltools.preference.IntegerPreference;
 import mobi.cyann.deviltools.preference.VoltagePreference;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
@@ -73,12 +74,24 @@ public class VoltageControlFragment extends BasePreferenceFragment implements On
 		maxIntVolt = (IntegerPreference)findPreference(getString(R.string.key_max_int_volt));
 		findPreference(getString(R.string.key_default_voltage)).setOnPreferenceChangeListener(this);
 		findPreference(getString(R.string.key_default_gpu_voltage)).setOnPreferenceChangeListener(this);
+
 	    if(!cpuVolatgeSupported()) {
 		prefSet.removePreference(cpuvoltageCategory);
 	    } else {
 		if (! Utils.fileExists("/sys/class/misc/customvoltage/int_volt")) {
 		mCpuVolt.removePreference(findPreference("key_int_volt_pref"));
 		}
+	    }
+	    if(!gpuVolatgeSupported()) {
+		prefSet.removePreference(gpuvoltageCategory);
+	    }
+		init();
+		
+		super.onPreferenceAttached(rootPreference, xmlId);
+	}
+
+	public void init () {
+	    if(cpuVolatgeSupported()) {
 		armVoltages.clear();
 		intVoltages.clear();
 		
@@ -92,17 +105,14 @@ public class VoltageControlFragment extends BasePreferenceFragment implements On
 			readVoltages(maxArmVolt, getString(R.string.key_arm_volt_pref), "armvolt_", "/sys/class/misc/customvoltage/arm_volt", armVoltages);
 		}
 	    }
-	    if(!gpuVolatgeSupported()) {
-		prefSet.removePreference(gpuvoltageCategory);
-	    } else {
+	    if(gpuVolatgeSupported()) {
 		gpuVoltages.clear();
 
 		Log.d(LOG_TAG, "read from mali_table");
 		maliTable();
 	    }
-		
-		super.onPreferenceAttached(rootPreference, xmlId);
 	}
+
 	
 	private void showWarningDialog() {
 		if(!preferences.getBoolean(getString(R.string.key_dont_show_volt_warning), false)) {
@@ -151,7 +161,7 @@ public class VoltageControlFragment extends BasePreferenceFragment implements On
 		vp.setSummary("0");
 		vp.setMaxValue(1400000);
 		vp.setMinValue(600000);
-		vp.setStep(5000);
+		vp.setStep(500);
 		vp.setMetrics("");
 		vp.setPersistent(false);
 		vp.setIgnoreInterface(true);
@@ -297,4 +307,19 @@ public class VoltageControlFragment extends BasePreferenceFragment implements On
 
 		return true;
 	}
+
+
+    public static void restore(Context context) {
+        if (!gpuVolatgeSupported()) {
+            return;
+        }
+	Log.d(LOG_TAG, "restore mali volt");
+	SysCommand sysCommand = SysCommand.getInstance();
+            SharedPreferences sharedPrefs = PreferenceManager.
+		getDefaultSharedPreferences(context);
+                String value = sharedPrefs.getString(context.getString(R.string.key_malivolt_pref), "-1000");
+                if(!value.equals("-1000")) {
+                    sysCommand.writeSysfs(GPU_FILE_PATH, value);
+		}
+    }
 }

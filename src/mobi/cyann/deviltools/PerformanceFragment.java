@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import mobi.cyann.deviltools.PreferenceListFragment.OnPreferenceAttachedListener;
 import mobi.cyann.deviltools.preference.IntegerPreference;
 import mobi.cyann.deviltools.SysCommand;
+import mobi.cyann.deviltools.preference.ListPreference;
 import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -17,7 +18,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.ListPreference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
@@ -29,7 +29,7 @@ import android.widget.TextView;
  * @DerTeufel1980
  *
  */
-public class PerformanceFragment extends BasePreferenceFragment implements OnPreferenceChangeListener {
+public class PerformanceFragment extends BasePreferenceFragment {
 	public PerformanceFragment() {
 		super(R.layout.performance);
 	}
@@ -41,6 +41,11 @@ public class PerformanceFragment extends BasePreferenceFragment implements OnPre
 
     private PreferenceScreen mGpuOc;
     private ListPreference mGpuClock[] = new ListPreference[5];
+    private ListPreference step0_clk;
+    private ListPreference step1_clk;
+    private ListPreference step2_clk;
+    private ListPreference step3_clk;
+    private ListPreference step4_clk;
 
     public static final String[] GPU_CLOCK_FILE_PATH = new String[] {
 	"/sys/module/mali/parameters/step0_clk",
@@ -67,8 +72,9 @@ public class PerformanceFragment extends BasePreferenceFragment implements OnPre
 	"/sys/module/mali/parameters/step2_down",
 	"/sys/module/mali/parameters/step3_down",
 	"/sys/module/mali/parameters/step4_down",
-	"/sys/module/mali/parameters/mali_gpu_utilization_timeout",
 	};
+
+    private static final String GPU_AVAILABLE_FREQ = "/sys/devices/virtual/misc/gpu_control/available_frequencies";
 
 
 	@Override
@@ -84,50 +90,63 @@ public class PerformanceFragment extends BasePreferenceFragment implements OnPre
     	final PreferenceCategory gpucontrolCategory =
                 (PreferenceCategory) prefSet.findPreference(CATEGORY_GPU_CONTROL);
 
-	if(!IsSupported()) {
-	prefSet.removePreference(gpucontrolCategory);
-	} else if (ocIsSupported()) {
-	int i = 0;
-	   for (String filePath : GPU_CLOCK_FILE_PATH) {
-           mGpuClock[i] = (ListPreference) findPreference(KEY_GPU_CLOCK[i]);
-	   	if (mGpuClock[i] != null) {
-        	   mGpuClock[i].setOnPreferenceChangeListener(this);
-           	   String value = preferences.getString(filePath, "-1");
-		   if(!value.equals("-1")) {
-		   sysCommand.writeSysfs(filePath, value);
-		   setPreferenceString(filePath, value);
-		   }
-	   	   if(sysCommand.readSysfs(filePath) > 0) {
-           	   mGpuClock[i].setSummary(sysCommand.getLastResult(0) + " Mhz");
-		   }
-	   	}
-	   i++;
-	   }
-	} else {
-	mGpuOc.removePreference(findPreference("gpu_speed_category"));
+	step0_clk = (ListPreference)findPreference(getString(R.string.key_step0_clk));
+	step1_clk = (ListPreference)findPreference(getString(R.string.key_step1_clk));
+	step2_clk = (ListPreference)findPreference(getString(R.string.key_step2_clk));
+	step3_clk = (ListPreference)findPreference(getString(R.string.key_step3_clk));
+	step4_clk = (ListPreference)findPreference(getString(R.string.key_step4_clk));
+        if (Utils.fileExists(GPU_AVAILABLE_FREQ)) {
+	reloadFrequencies();
 	}
-
     }
-	
-    public boolean onPreferenceChange(Preference preference, Object objValue) {
-	SysCommand sc = SysCommand.getInstance();
-	int status, index, i = 0;
-	for (String filePath : GPU_CLOCK_FILE_PATH) {
-	    if (preference == mGpuClock[i] && Utils.fileExists(filePath)) {
-            status = Integer.valueOf((String) objValue);
-            index = mGpuClock[i].findIndexOfValue((String) objValue);
-	    sc.writeSysfs(filePath, ((String) objValue));
-            setPreferenceString(filePath, ((String) objValue));
-	   	if(sc.readSysfs(filePath) > 0) {
-           	mGpuClock[i].setSummary(sc.getLastResult(0) + " Mhz");
+
+	private Integer[] readAvailableFrequencies() {
+		SysCommand sc = SysCommand.getInstance();
+		Integer availableFreqs[] = null;
+		int n = sc.readSysfs("/sys/devices/virtual/misc/gpu_control/available_frequencies");
+		if(n > 0) {
+			String temp = sc.getLastResult(0);
+			String f[] = temp.split(" ");
+			availableFreqs = new Integer[f.length];
+			for(int i = 0; i < f.length; ++i) {
+				availableFreqs[i] = Integer.parseInt(f[i]);
+			}
 		}
-            return true;
-            }
-	i++;
+		return availableFreqs;
 	}
 
-        return false;
-    }
+	private void reloadFrequencies() {
+			Integer availableFreqs[] = readAvailableFrequencies();
+			String availableFreqsStr[] = new String[availableFreqs.length];
+			for(int i = 0; i < availableFreqs.length; ++i) {
+				availableFreqsStr[i] = availableFreqs[i] + " MHz";
+			}
+		if(step0_clk != null) {	
+			step0_clk.setListValues(availableFreqs);
+			step0_clk.setListLabels(availableFreqsStr);
+			step0_clk.reload(false);
+		}
+		if(step1_clk != null) {	
+			step1_clk.setListValues(availableFreqs);
+			step1_clk.setListLabels(availableFreqsStr);
+			step1_clk.reload(false);
+		}
+		if(step2_clk != null) {	
+			step2_clk.setListValues(availableFreqs);
+			step2_clk.setListLabels(availableFreqsStr);
+			step2_clk.reload(false);
+		}
+		if(step3_clk != null) {	
+			step3_clk.setListValues(availableFreqs);
+			step3_clk.setListLabels(availableFreqsStr);
+			step3_clk.reload(false);
+		}
+		if(step4_clk != null) {	
+			step4_clk.setListValues(availableFreqs);
+			step4_clk.setListLabels(availableFreqsStr);
+			step4_clk.reload(false);
+		}
+	}
 
     public static void setPreferenceString(String key, String value) {
 	Editor ed = preferences.edit();
@@ -166,5 +185,4 @@ public class PerformanceFragment extends BasePreferenceFragment implements OnPre
 	    boolean thresholdsupported = thresholdIsSupported();
 	    return (ocsupported || thresholdsupported);
     }
-
 }

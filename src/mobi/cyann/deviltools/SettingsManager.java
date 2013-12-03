@@ -968,17 +968,73 @@ public class SettingsManager {
 		}
 
 		// gpu
-        	for (String filePath : PerformanceFragment.GPU_CLOCK_FILE_PATH) {
-            	status = preferences.getString(filePath, "-1000");
-		if(!status.equals("-1000"))
-		command.append("echo " + status + " > " + filePath + "\n");
-        	}
+		int step0_clk = preferences.getInt(c.getString(R.string.key_step0_clk), -1000);
+		if(step0_clk > -1000) {
+			command.append("echo " + step0_clk + " > " + "/sys/module/mali/parameters/step0_clk\n");
+		}
 
+		int step1_clk = preferences.getInt(c.getString(R.string.key_step1_clk), -1000);
+		if(step1_clk > -1000) {
+			command.append("echo " + step1_clk + " > " + "/sys/module/mali/parameters/step1_clk\n");
+		}
+
+		int step2_clk = preferences.getInt(c.getString(R.string.key_step2_clk), -1000);
+		if(step2_clk > -1000) {
+			command.append("echo " + step2_clk + " > " + "/sys/module/mali/parameters/step2_clk\n");
+		}
+
+		int step3_clk = preferences.getInt(c.getString(R.string.key_step3_clk), -1000);
+		if(step3_clk > -1000) {
+			command.append("echo " + step3_clk + " > " + "/sys/module/mali/parameters/step3_clk\n");
+		}
+
+		int step4_clk = preferences.getInt(c.getString(R.string.key_step4_clk), -1000);
+		if(step4_clk > -1000) {
+			command.append("echo " + step4_clk + " > " + "/sys/module/mali/parameters/step4_clk\n");
+		}
+		// gpu threshold
+		int step0_up = preferences.getInt(c.getString(R.string.key_step0_up), -1000);
+		if(step0_up > -1000) {
+			command.append("echo " + step0_up + " > " + "/sys/module/mali/parameters/step0_up\n");
+		}
+		int step1_up = preferences.getInt(c.getString(R.string.key_step1_up), -1000);
+		if(step1_up > -1000) {
+			command.append("echo " + step1_up + " > " + "/sys/module/mali/parameters/step1_up\n");
+		}
+		int step2_up = preferences.getInt(c.getString(R.string.key_step2_up), -1000);
+		if(step2_up > -1000) {
+			command.append("echo " + step2_up + " > " + "/sys/module/mali/parameters/step2_up\n");
+		}
+		int step3_up = preferences.getInt(c.getString(R.string.key_step3_up), -1000);
+		if(step3_up > -1000) {
+			command.append("echo " + step3_up + " > " + "/sys/module/mali/parameters/step3_up\n");
+		}
+
+		int step1_down = preferences.getInt(c.getString(R.string.key_step1_down), -1000);
+		if(step1_down > -1000) {
+			command.append("echo " + step1_down + " > " + "/sys/module/mali/parameters/step1_down\n");
+		}
+		int step2_down = preferences.getInt(c.getString(R.string.key_step2_down), -1000);
+		if(step2_down > -1000) {
+			command.append("echo " + step2_down + " > " + "/sys/module/mali/parameters/step2_down\n");
+		}
+		int step3_down = preferences.getInt(c.getString(R.string.key_step3_down), -1000);
+		if(step3_down > -1000) {
+			command.append("echo " + step3_down + " > " + "/sys/module/mali/parameters/step3_down\n");
+		}
+		int step4_down = preferences.getInt(c.getString(R.string.key_step4_down), -1000);
+		if(step4_down > -1000) {
+			command.append("echo " + step4_down + " > " + "/sys/module/mali/parameters/step4_down\n");
+		}
+
+
+		// gpu voltage
 		status = preferences.getString(c.getString(R.string.key_malivolt_pref), "-1000");
 		if(!status.equals("-1000")) {
-			command.append("echo " + status + " > " + "/sys/class/misc/mali_control/voltage_control\n");
+			command.append("echo " + status + " > " + "/sys/class/misc/gpu_control/gpu_voltage_control\n");
 		}
-		
+
+	
 		// io scheduler
 		status = preferences.getString(c.getString(R.string.key_iosched), "-1000");
 		if(!status.equals("-1000")) {
@@ -1117,7 +1173,6 @@ public class SettingsManager {
 			command.append("echo " + value + " > " + "/proc/sys/vm/swappiness\n");
 		}
 
-
 		return command.toString();
 	}
 	
@@ -1249,7 +1304,7 @@ public class SettingsManager {
 		SysCommand.getInstance().suRun(command);
         	ColorTuningPreference.restore(c);
         	Mdnie.restore(c);
-		SpeakerOffsetPreference.restore(c);
+		VoltageControlFragment.restore(c);
 		return SUCCESS;
 	}
 }
