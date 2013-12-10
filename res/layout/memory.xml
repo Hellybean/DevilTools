@@ -30,6 +30,24 @@
 
 	</PreferenceCategory>
 
+
+	<PreferenceCategory
+	android:key="zswap_category"
+	android:title="zswap Settings" >
+    	<ListPreference
+            android:key="@string/key_zswap"
+            android:title="@string/label_zswap"
+            android:entries="@array/zswap_entries"
+            android:entryValues="@array/zswap_values"
+            android:summary="@string/status_not_available"
+	    android:layout="@layout/mylayout"/>
+
+     	<Preference 
+	    android:title="Click to apply zswap settings"
+	    android:key="zswap_apply"/>      
+
+	</PreferenceCategory>
+
     <mobi.cyann.deviltools.preference.RemovablePreferenceCategory
 	android:title="Swappiness Settings" >
     <mobi.cyann.deviltools.preference.IntegerPreference

@@ -43,6 +43,29 @@
     	</PreferenceScreen>
     </PreferenceCategory>
 
+    <mobi.cyann.deviltools.preference.RemovablePreferenceCategory
+	android:title="@string/mdnie_category" >
+    <mobi.cyann.deviltools.preference.IntegerPreference
+            android:key="mdnie_mode"
+	    android:title="@string/mdnie_mode"
+            custom:interfacePath="/sys/class/mdnie/mdnie/mode"
+            custom:maxValue="4"
+            custom:minValue="0"
+            custom:step="1"
+            android:summary="0"
+	    custom:description="Change mdnie mode. 0 = DYNAMIC, 1 = STANDARD, 2 =  NATURAL, 3 = MOVIE, 4 = AUTO" />
+
+    <mobi.cyann.deviltools.preference.IntegerPreference
+            android:key="mdnie_scenario"
+	    android:title="@string/mdnie_scenario"
+            custom:interfacePath="/sys/class/mdnie/mdnie/scenario"
+            custom:maxValue="42"
+            custom:minValue="0"
+            custom:step="1"
+            android:summary="0"
+	    custom:description="Change mdnie scenario. value 2, 3 and 13 to 39 aren't defined and don't change anything.\nSometimes toggeling screen off/on is required for changes to take place" />
+	</mobi.cyann.deviltools.preference.RemovablePreferenceCategory>
+
 
     <PreferenceCategory android:title="@string/color_calibration_category"
 	android:key="key_color_calibration_category" >

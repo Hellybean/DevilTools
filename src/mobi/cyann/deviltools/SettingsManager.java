@@ -1149,6 +1149,16 @@ public class SettingsManager {
 			command.append("echo " + value + " > " + "/sys/class/misc/mdnie/hook_control/mcm_temperature\n");
 		}
 
+		value = preferences.getInt(c.getString(R.string.mdnie_mode), -1000);
+		if(value > -1000) {
+			command.append("echo " + value + " > " + "/sys/class/mdnie/mdnie/mode\n");
+		}
+
+		value = preferences.getInt(c.getString(R.string.mdnie_scenario), -1000);
+		if(value > -1000) {
+			command.append("echo " + value + " > " + "/sys/class/mdnie/mdnie/scenario\n");
+		}
+
 
 		//Memory
 		String zramSize = preferences.getString("zramSize", "-1000");
@@ -1167,6 +1177,19 @@ public class SettingsManager {
 			"\n");
         	    }
 		}
+
+		String zswapSize = preferences.getString("zswapSize", "-1000");
+		if(!zswapSize.equals("-1000")) {
+		    command.append("swapoff " + 
+			MemoryFragment.ZSWAP_FILE_PATH + "\n");
+		    command.append("echo " + String.valueOf(zswapSize) + " > " + 
+			MemoryFragment.ZSWAP_FILE_SIZE_PATH + "\n");
+		    command.append("mkswap " + MemoryFragment.ZSWAP_FILE_PATH + 
+			"\n");
+		    if (!String.valueOf(zswapSize).equals("0"))
+		    	command.append("swapon " + MemoryFragment.ZSWAP_FILE_PATH + 
+			"\n");
+        	    }
 
 		value = preferences.getInt(c.getString(R.string.key_swappiness), -1000);
 		if(value > -1000) {

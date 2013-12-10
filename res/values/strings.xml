@@ -344,6 +344,7 @@
 	<string name="bigmem_big">about 407 mb, breaks 720p</string>
 	<string name="bigmem_nocam">maximum ram, no cam at all</string>
 	<string name="label_zram">Change Zram settings</string>
+	<string name="label_zswap">Change Zswap settings</string>
 	<string name="label_swappiness">Swappiness</string>
 
 
@@ -374,6 +375,10 @@
     <string name="label_brightness_takeover_point">Takeover point</string>
     <string name="label_brightness_input_delta">Auto-brightness input delta</string>
     <string name="label_fb_delay">Front buffer delay</string>
+    <string name="mdnie_category">General Mdnie Settings</string>
+    <string name="mdnie_mode">mDNIe Mode</string>
+    <string name="mdnie_scenario">mDNIe Scenario</string>
+
     <string name="brightness_manipulation_category">Brightness</string>
     <string name="brightness_manipulation">Digital brightness manipulation</string>
     <string name="white_color_category">White colour temperature</string>

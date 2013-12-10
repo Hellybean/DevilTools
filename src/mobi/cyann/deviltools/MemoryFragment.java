@@ -41,11 +41,13 @@ public class MemoryFragment extends BasePreferenceFragment implements OnPreferen
 	
 	private ListPreference mBigmem;
 	private ListPreference mZram;
+	private ListPreference mZswap;
 
         private ContentResolver mContentResolver;
 	private static SharedPreferences preferences;
 
     	private static final String BIGMEM_FILE_PATH = "/sys/kernel/bigmem/enable";
+    	public static final String ZSWAP_FILE_SIZE_PATH = "/sys/block/vnswap0/disksize";
     	public static final String[] ZRAM_FILE_SIZE_PATH = new String[] {
     	"/sys/block/zram0/disksize",
     	"/sys/block/zram1/disksize",
@@ -66,6 +68,8 @@ public class MemoryFragment extends BasePreferenceFragment implements OnPreferen
     	"/dev/block/zram2",
     	"/dev/block/zram3",
 	};
+
+    	public static final String ZSWAP_FILE_PATH = "/dev/block/vnswap0";
 
 	@Override
     	public void onCreate(Bundle savedInstanceState) {
@@ -117,6 +121,30 @@ public class MemoryFragment extends BasePreferenceFragment implements OnPreferen
 
 	zram_apply(false);
 	}
+
+    	mZswap = (ListPreference) findPreference("key_zswap");
+ 	Preference button_zswap = (Preference)findPreference("zswap_apply");
+	if (!zswap_supported()) {
+            PreferenceCategory category = (PreferenceCategory) getPreferenceScreen().findPreference("zswap_category");
+            category.removePreference(mZswap);
+            category.removePreference(button_zswap);
+            getPreferenceScreen().removePreference(category);
+	} else {
+        mZswap.setOnPreferenceChangeListener(this);
+   	if(button_zswap != null) 
+   	{
+        button_zswap.setOnPreferenceClickListener(new Preference.
+		OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference arg0) {
+                        zswap_apply(true);   
+                        return true;
+                    }
+                });     
+    	}
+
+	zswap_apply(false);
+	}
     }
 	
     public boolean onPreferenceChange(Preference preference, Object objValue) {
@@ -133,6 +161,11 @@ public class MemoryFragment extends BasePreferenceFragment implements OnPreferen
             String zramPercent = ((String) objValue);
 	    setPreferenceString(getString(R.string.key_zram), zramPercent);
 	    zram_apply(false);
+            return true;
+        } else if (preference == mZswap) {
+            String zswapPercent = ((String) objValue);
+	    setPreferenceString(getString(R.string.key_zswap), zswapPercent);
+	    zswap_apply(false);
             return true;
         }
         return false;
@@ -158,6 +191,13 @@ public class MemoryFragment extends BasePreferenceFragment implements OnPreferen
             }
         }
 	return count;
+    }
+
+    public static boolean zswap_supported() {
+        if (Utils.fileExists(ZSWAP_FILE_SIZE_PATH)) {
+        	return true;
+        }
+	return false;
     }
 
     public static synchronized int readTotalRam() { 
@@ -195,6 +235,12 @@ public class MemoryFragment extends BasePreferenceFragment implements OnPreferen
     	return totalzramSize;
     }
 
+    private long totalZswapSize(String percent) {
+    	String zswapPercent = percent;       
+    	long totalzswapSize = (getTotalMem() / 100) * Integer.parseInt(zswapPercent) / 1048576L;
+    	return totalzswapSize;
+    }
+
     
     
     private String zramCommand(String percent) {
@@ -223,4 +269,29 @@ public class MemoryFragment extends BasePreferenceFragment implements OnPreferen
 	sc.suRun(command);
 	}
     }
+
+
+    private String zswapCommand(String percent) {
+	String zswapPercent = percent;
+	long zswapSize = (getTotalMem() / 100) * Integer.parseInt(zswapPercent);
+	setPreferenceString("zswapSize", String.valueOf(zswapSize));
+	StringBuilder command = new StringBuilder();
+		command.append("swapoff " + ZSWAP_FILE_PATH + "\n");
+		command.append("echo " + String.valueOf(zswapSize) + " > " + ZSWAP_FILE_SIZE_PATH + "\n");
+		command.append("mkswap " + ZSWAP_FILE_PATH + "\n");
+		if (zswapSize!=0)
+			command.append("swapon " + ZSWAP_FILE_PATH + "\n");
+	return command.toString();
+    }
+
+    private void zswap_apply(boolean apply) {
+	SysCommand sc = SysCommand.getInstance();
+	String zswapPercent = preferences.getString("key_zswap", "0");
+        mZswap.setSummary(zswapPercent + "%% of total availbale Ram are going to be used for Zswap" + "\n" + "This is equivalent to " + String.valueOf(totalZswapSize(zswapPercent)) + " MB");
+	if (apply) {
+	String command = zswapCommand(zswapPercent);
+	sc.suRun(command);
+	}
+    }
+
 }
