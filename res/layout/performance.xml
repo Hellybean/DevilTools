@@ -19,35 +19,35 @@
 
     	    <PreferenceCategory android:title="@string/label_gpu_speed"
 	    android:key="gpu_speed_category" >
-    		<mobi.cyann.deviltools.preference.ListPreference
+    		<mobi.cyann.deviltools.preference.CustomListPreference
             	android:key="@string/key_step0_clk"
             	android:title="@string/label_step0_clk"
         	custom:interfacePath="/sys/module/mali/parameters/step0_clk"
             	android:summary="@string/status_not_available"
         	custom:valueType="integer" />
 
-    		<mobi.cyann.deviltools.preference.ListPreference
+    		<mobi.cyann.deviltools.preference.CustomListPreference
             	android:key="@string/key_step1_clk"
             	android:title="@string/label_step1_clk"
         	custom:interfacePath="/sys/module/mali/parameters/step1_clk"
             	android:summary="@string/status_not_available"
         	custom:valueType="integer" />
 
-    		<mobi.cyann.deviltools.preference.ListPreference
+    		<mobi.cyann.deviltools.preference.CustomListPreference
             	android:key="@string/key_step2_clk"
             	android:title="@string/label_step2_clk"
         	custom:interfacePath="/sys/module/mali/parameters/step2_clk"
             	android:summary="@string/status_not_available"
         	custom:valueType="integer" />
 
-    		<mobi.cyann.deviltools.preference.ListPreference
+    		<mobi.cyann.deviltools.preference.CustomListPreference
             	android:key="@string/key_step3_clk"
             	android:title="@string/label_step3_clk"
         	custom:interfacePath="/sys/module/mali/parameters/step3_clk"
             	android:summary="@string/status_not_available"
         	custom:valueType="integer" />
 
-    		<mobi.cyann.deviltools.preference.ListPreference
+    		<mobi.cyann.deviltools.preference.CustomListPreference
             	android:key="@string/key_step4_clk"
             	android:title="@string/label_step4_clk"
         	custom:interfacePath="/sys/module/mali/parameters/step4_clk"

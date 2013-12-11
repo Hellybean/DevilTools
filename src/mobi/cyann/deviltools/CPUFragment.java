@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import mobi.cyann.deviltools.preference.BasePreference.OnPreferenceChangedListener;
 import mobi.cyann.deviltools.preference.IntegerPreference;
-import mobi.cyann.deviltools.preference.ListPreference;
+import mobi.cyann.deviltools.preference.CustomListPreference;
 import mobi.cyann.deviltools.preference.LulzactiveScreenOffPreference;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -31,11 +31,11 @@ import android.widget.TextView;
 public class CPUFragment extends BasePreferenceFragment implements OnPreferenceChangedListener, OnPreferenceClickListener {
 	private final static String LOG_TAG = "DevilTools.CPUActivity";
 	
-	private ListPreference governor;
-	private ListPreference minFreq;
-	private ListPreference maxFreq;
-	private ListPreference liveocTargetLow;
-	private ListPreference liveocTargetHigh;
+	private CustomListPreference governor;
+	private CustomListPreference minFreq;
+	private CustomListPreference maxFreq;
+	private CustomListPreference liveocTargetLow;
+	private CustomListPreference liveocTargetHigh;
 	
 	public CPUFragment() {
 		super(R.layout.cpu);
@@ -54,20 +54,20 @@ public class CPUFragment extends BasePreferenceFragment implements OnPreferenceC
 		p = findPreference(getString(R.string.key_liveoc));
 		if(p != null) {
 			((IntegerPreference)p).setChangedListener(this);
-			liveocTargetLow = (ListPreference)findPreference(getString(R.string.key_liveoc_target_low));
-			liveocTargetHigh = (ListPreference)findPreference(getString(R.string.key_liveoc_target_high));
+			liveocTargetLow = (CustomListPreference)findPreference(getString(R.string.key_liveoc_target_low));
+			liveocTargetHigh = (CustomListPreference)findPreference(getString(R.string.key_liveoc_target_high));
 			if(liveocTargetLow != null && liveocTargetHigh != null) {
 				liveocTargetLow.setChangedListener(this);
 				liveocTargetHigh.setChangedListener(this);
 				reloadLiveocTarget();
 			}
 		}
-		governor = (ListPreference)findPreference(getString(R.string.key_governor));
+		governor = (CustomListPreference)findPreference(getString(R.string.key_governor));
 		if(governor != null) {
 			reloadGovernors();
 		}
-		minFreq = (ListPreference)findPreference(getString(R.string.key_min_cpufreq));
-		maxFreq = (ListPreference)findPreference(getString(R.string.key_max_cpufreq));
+		minFreq = (CustomListPreference)findPreference(getString(R.string.key_min_cpufreq));
+		maxFreq = (CustomListPreference)findPreference(getString(R.string.key_max_cpufreq));
 		reloadFrequencies();
 	}
 	

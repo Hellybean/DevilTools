@@ -1,5 +1,5 @@
 /**
- * ListPreference.java
+ * CustomListPreference.java
  * Nov 27, 2011 1:18:40 PM
  */
 package mobi.cyann.deviltools.preference;
@@ -19,26 +19,26 @@ import android.widget.TextView;
  * @author arif
  *
  */
-public class ListPreference extends BasePreference<Object> implements DialogInterface.OnClickListener {
-	private final static String LOG_TAG = "DevilTools.ListPreference";
+public class CustomListPreference extends BasePreference<Object> implements DialogInterface.OnClickListener {
+	private final static String LOG_TAG = "DevilTools.CustomListPreference";
 	private Object value = null;
 	private Object listValues[];
 	private String listLabels[];
 	private int valueType;
 	
-	public ListPreference(Context context, AttributeSet attrs, int defStyle) {
+	public CustomListPreference(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		
-		TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.mobi_cyann_deviltools_preference_ListPreference, defStyle, 0);
-		valueType = a.getInt(R.styleable.mobi_cyann_deviltools_preference_ListPreference_valueType, 0);
+		TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.mobi_cyann_deviltools_preference_CustomListPreference, defStyle, 0);
+		valueType = a.getInt(R.styleable.mobi_cyann_deviltools_preference_CustomListPreference_valueType, 0);
 		a.recycle();
 	}
 
-	public ListPreference(Context context, AttributeSet attrs) {
+	public CustomListPreference(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ListPreference(Context context) {
+	public CustomListPreference(Context context) {
 		this(context, null);
 	}
 	

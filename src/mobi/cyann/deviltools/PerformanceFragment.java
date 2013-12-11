@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import mobi.cyann.deviltools.PreferenceListFragment.OnPreferenceAttachedListener;
 import mobi.cyann.deviltools.preference.IntegerPreference;
 import mobi.cyann.deviltools.SysCommand;
-import mobi.cyann.deviltools.preference.ListPreference;
+import mobi.cyann.deviltools.preference.CustomListPreference;
 import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -40,12 +40,12 @@ public class PerformanceFragment extends BasePreferenceFragment {
     private static final String CATEGORY_GPU_CONTROL = "key_gpu_control_category";
 
     private PreferenceScreen mGpuOc;
-    private ListPreference mGpuClock[] = new ListPreference[5];
-    private ListPreference step0_clk;
-    private ListPreference step1_clk;
-    private ListPreference step2_clk;
-    private ListPreference step3_clk;
-    private ListPreference step4_clk;
+    private CustomListPreference mGpuClock[] = new CustomListPreference[5];
+    private CustomListPreference step0_clk;
+    private CustomListPreference step1_clk;
+    private CustomListPreference step2_clk;
+    private CustomListPreference step3_clk;
+    private CustomListPreference step4_clk;
 
     public static final String[] GPU_CLOCK_FILE_PATH = new String[] {
 	"/sys/module/mali/parameters/step0_clk",
@@ -90,11 +90,11 @@ public class PerformanceFragment extends BasePreferenceFragment {
     	final PreferenceCategory gpucontrolCategory =
                 (PreferenceCategory) prefSet.findPreference(CATEGORY_GPU_CONTROL);
 
-	step0_clk = (ListPreference)findPreference(getString(R.string.key_step0_clk));
-	step1_clk = (ListPreference)findPreference(getString(R.string.key_step1_clk));
-	step2_clk = (ListPreference)findPreference(getString(R.string.key_step2_clk));
-	step3_clk = (ListPreference)findPreference(getString(R.string.key_step3_clk));
-	step4_clk = (ListPreference)findPreference(getString(R.string.key_step4_clk));
+	step0_clk = (CustomListPreference)findPreference(getString(R.string.key_step0_clk));
+	step1_clk = (CustomListPreference)findPreference(getString(R.string.key_step1_clk));
+	step2_clk = (CustomListPreference)findPreference(getString(R.string.key_step2_clk));
+	step3_clk = (CustomListPreference)findPreference(getString(R.string.key_step3_clk));
+	step4_clk = (CustomListPreference)findPreference(getString(R.string.key_step4_clk));
         if (Utils.fileExists(GPU_AVAILABLE_FREQ)) {
 	reloadFrequencies();
 	}

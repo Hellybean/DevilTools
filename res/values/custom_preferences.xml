@@ -21,7 +21,7 @@
 	<declare-styleable name="mobi.cyann.deviltools.preference.IoSchedPreference">
 		<attr name="writeToInterface" format="reference"/>    
 	</declare-styleable>
-	<declare-styleable name="mobi.cyann.deviltools.preference.ListPreference">
+	<declare-styleable name="mobi.cyann.deviltools.preference.CustomListPreference">
 		<attr name="valueType">
 		   <enum name="integer" value="0"/>
 		   <enum name="string" value="1"/>
