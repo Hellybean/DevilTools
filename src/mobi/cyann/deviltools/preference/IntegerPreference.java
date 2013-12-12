@@ -57,6 +57,7 @@ public class IntegerPreference extends StatusPreference implements DialogInterfa
 		// Sync the summary view
         TextView summaryView = (TextView) view.findViewById(android.R.id.summary);
         if (summaryView != null) {
+		value = readValue();
 		summaryView.setMaxLines(15);
         	if(value + shift < 0) {
         		summaryView.setText(R.string.status_not_available);
@@ -72,6 +73,19 @@ public class IntegerPreference extends StatusPreference implements DialogInterfa
         		summaryView.setText(String.valueOf(value));
         	}
         }
+	}
+
+	@Override
+	protected Integer readValue() {
+		int ret = -1000;
+		String str = readFromInterface();
+		try {
+			ret = Integer.parseInt(str);
+		}catch(NumberFormatException ex) {
+			
+		}catch(Exception ex) {
+		}
+		return ret;
 	}
 	
 	@Override
@@ -92,10 +106,10 @@ public class IntegerPreference extends StatusPreference implements DialogInterfa
 	@Override
 	public void onClick(DialogInterface d, int which) {
 		if(which == DialogInterface.BUTTON_POSITIVE) {
-			int newValue = ((SeekbarDialog)d).getValue();
-			if (!callChangeListener(newValue)) {
-	            return;
-	        }
+		    int newValue = ((SeekbarDialog)d).getValue();
+		    if (!callChangeListener(newValue)) {
+	            	return;
+	            }
 	        writeValue(newValue, true);
 		}
 	}
